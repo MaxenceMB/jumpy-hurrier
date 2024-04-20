@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class GenerationScript : MonoBehaviour {
 
-    [SerializeField] private int levelWidth, levelHeight;
-    [SerializeField] private GameObject tileBottom, tileTop;
+    public int levelWidth, levelHeight, startLength, endLength;
+    public GameObject tileTop, tileBottom;
 
     private int lastHeight = 1;
+    private int lastPlatformHeight;
     private int sameHeightCounter = 0;
 
     public void Start() {
@@ -16,15 +17,40 @@ public class GenerationScript : MonoBehaviour {
 
     private void GenerateTerrain() {
 
+        // For the begining 
+        GenerateStartTerrain();
+
         // For each column of the level
-        for(int x = 0; x < levelWidth; x++) {
+        for(int x = this.startLength; x < (this.levelWidth - this.endLength); x++) {
 
             int height = GetNextHeight();
             for(int y = 0; y < height; y++) {
-                SpawnTile(tileBottom, x, y);
+                SpawnTile(this.tileBottom, x, y);
             }
 
-            if(height > 0) SpawnTile(tileTop, x, height);
+            if(height > 0) SpawnTile(this.tileTop, x, height);
+        }
+
+        // For the end
+        GenerateEndTerrain();        
+    }
+
+    private void GenerateStartTerrain() {
+        for(int x = 0; x < this.startLength; x++) {
+            SpawnTile(this.tileBottom, x, 0);
+            SpawnTile(this.tileBottom, x, 1);
+            SpawnTile(this.tileTop, x, 2);
+        }
+    }
+
+    private void GenerateEndTerrain() {
+        int endStart = this.levelWidth - this.endLength;
+
+        for(int x = 0; x < this.endLength; x++) {
+            for(int y = 0; y < this.lastPlatformHeight; y++) {
+                SpawnTile(this.tileBottom, endStart+x, y);
+            }
+            SpawnTile(this.tileTop, endStart+x, this.lastPlatformHeight);
         }
     }
 
@@ -32,15 +58,18 @@ public class GenerationScript : MonoBehaviour {
         int height = 0;
         int chance = Random.Range(0, 100);
 
-        if(chance < (50 - 10*sameHeightCounter)) {
-            height = lastHeight;
-            sameHeightCounter++;
+        if(chance < (75 - 5*this.sameHeightCounter)) {
+            height = this.lastHeight;
+            this.sameHeightCounter++;
         } else {
-            height = Random.Range(0, levelHeight);
+            height = Random.Range(0, this.levelHeight+3)-3;
+            height = (height <= 0) ? 0 : height;
 
-            lastHeight = height;
-            sameHeightCounter = 0;
+            this.sameHeightCounter = (height == this.lastHeight) ? this.sameHeightCounter+1 : 0;
         }
+        
+        lastHeight = height;
+        if(height != 0) this.lastPlatformHeight = height;
 
         return height;
     }
@@ -48,6 +77,13 @@ public class GenerationScript : MonoBehaviour {
     private void SpawnTile(GameObject tile, int x, int y) {
         tile = Instantiate(tile, new Vector2(x, y), Quaternion.identity);
         tile.transform.parent = this.transform;
+    }
+
+    public void RegenerateTerrain() {
+        while (transform.childCount > 0) {
+            DestroyImmediate(transform.GetChild(0).gameObject);
+        }
+        GenerateTerrain();
     }
 
 }

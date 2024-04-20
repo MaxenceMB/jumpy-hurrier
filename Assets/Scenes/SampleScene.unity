@@ -244,10 +244,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 479084a2fd5d15743b1ab0778478ab9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelWidth: 50
+  levelWidth: 200
   levelHeight: 10
-  tileBottom: {fileID: 3026265182200944753, guid: 8eaa78a7f4d2eaf4188ee86b601693d5, type: 3}
+  startLength: 15
+  endLength: 20
   tileTop: {fileID: 8575335648345227695, guid: a11ac19d5ee5e8f438424a54e83e9dab, type: 3}
+  tileBottom: {fileID: 3026265182200944753, guid: 8eaa78a7f4d2eaf4188ee86b601693d5, type: 3}
 --- !u!4 &1460762980
 Transform:
   m_ObjectHideFlags: 0
