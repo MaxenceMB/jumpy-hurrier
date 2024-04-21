@@ -12,7 +12,7 @@ public class GenerationScript : MonoBehaviour {
     private int sameHeightCounter = 0;
 
     public void Start() {
-        GenerateTerrain();
+        if(transform.childCount == 0) GenerateTerrain();
     }
 
     private void GenerateTerrain() {
