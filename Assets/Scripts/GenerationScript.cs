@@ -10,6 +10,7 @@ public class GenerationScript : MonoBehaviour {
     private int lastHeight = 1;
     private int lastPlatformHeight;
     private int sameHeightCounter = 0;
+    private int holeSize = 0;
 
     public void Start() {
         if(transform.childCount == 0) GenerateTerrain();
@@ -58,18 +59,23 @@ public class GenerationScript : MonoBehaviour {
         int height = 0;
         int chance = Random.Range(0, 100);
 
-        if(chance < (75 - 5*this.sameHeightCounter)) {
+        if(chance < (75 - 5*this.sameHeightCounter) && this.holeSize < 10) {
             height = this.lastHeight;
             this.sameHeightCounter++;
         } else {
-            height = Random.Range(0, this.levelHeight+3)-3;
+            if(this.holeSize > 0) {
+                height = Random.Range(1, this.levelHeight);
+            } else {
+                height = Random.Range(0, this.levelHeight+2)-2;
+            }
             height = (height <= 0) ? 0 : height;
 
             this.sameHeightCounter = (height == this.lastHeight) ? this.sameHeightCounter+1 : 0;
         }
         
         lastHeight = height;
-        if(height != 0) this.lastPlatformHeight = height;
+        if(height != 0) this.lastPlatformHeight = height; this.holeSize = 0;
+        if(height == 0) this.holeSize++;
 
         return height;
     }

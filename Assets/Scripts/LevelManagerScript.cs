@@ -24,6 +24,7 @@ public class LevelManagerScript : MonoBehaviour {
     }
 
     public void Restart() {
+        GameObject.Find("Player").transform.position = PlayerMovementScript.SPAWN_POSITION;
         this.transform.position = new Vector3(0, this.transform.position.y, this.transform.position.z);
     }
 }
